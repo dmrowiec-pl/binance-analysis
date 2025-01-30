@@ -1,7 +1,8 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-import { firstValueFrom } from 'rxjs';
+import { catchError, firstValueFrom } from 'rxjs';
 import { PriceChangeData } from './PriceChangeData';
+import { AxiosError } from 'axios';
 
 type KlineData = [
   number,
@@ -51,17 +52,21 @@ export class AnalysisService {
     endTime: number,
   ): Promise<KlineData[]> {
     const { data } = await firstValueFrom(
-      this.httpService.get<KlineData[]>(
-        'https://api.binance.com/api/v3/klines',
-        {
+      this.httpService
+        .get<KlineData[]>('https://api.binance.com/api/v3/klines', {
           params: {
             symbol: symbol,
             interval: interval,
             startTime: startTime,
             endTime: endTime,
           },
-        },
-      ),
+        })
+        .pipe(
+          catchError((error: AxiosError) => {
+            console.log(error);
+            throw new Error('Encountered error when fetching binance data');
+          }),
+        ),
     );
 
     return data;
