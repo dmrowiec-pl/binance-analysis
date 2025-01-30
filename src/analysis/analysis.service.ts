@@ -1,6 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
+import { PriceChangeData } from './PriceChangeData';
 
 // [
 //   [
@@ -40,7 +41,11 @@ const KLINE_DATA_CLOSE_PRICE_IDX = 4;
 export class AnalysisService {
   constructor(private httpService: HttpService) {}
 
-  async analyse(symbol: string, startTime: number, endTime: number) {
+  async analyse(
+    symbol: string,
+    startTime: number,
+    endTime: number,
+  ): Promise<string> {
     const klineDataForPeriod = await this.fetchHistoricalPrices(
       symbol,
       startTime,
@@ -48,6 +53,10 @@ export class AnalysisService {
     );
 
     const pricesForTimePeriod = this.getPricesFromKlineData(klineDataForPeriod);
+
+    const pricesChangeData = new PriceChangeData(pricesForTimePeriod);
+
+    return pricesChangeData.toString();
   }
 
   private async fetchHistoricalPrices(

@@ -1,18 +1,18 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { AnalysisService } from './analysis.service';
+
+// curl "http://localhost:3000/analysis?symbol=BTCUSDT&startTime=1737759600000&endTime=1737846000000"
 
 @Controller('analysis')
 export class AnalysisController {
-  // private readonly symbol = 'BTCUSDT';
-
   constructor(private readonly analysisService: AnalysisService) {}
 
   @Get()
   analyse(
-    @Param('symbol') symbol: string,
-    @Param('startTime') startTime: number,
-    @Param('endTime') endTime: number,
-  ) {
+    @Query('symbol') symbol: string,
+    @Query('startTime') startTime: number,
+    @Query('endTime') endTime: number,
+  ): Promise<string> {
     if (!symbol || !startTime || !endTime) {
       throw new Error('Invalid input parameters');
     }
