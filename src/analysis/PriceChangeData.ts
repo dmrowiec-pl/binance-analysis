@@ -4,8 +4,7 @@ export class PriceChangeData {
   max: number;
   average: number;
   median: number;
-  maxIncrease: number;
-  maxDecrease: number;
+  maxDiff: number;
 
   constructor(prices: number[]) {
     this.prices = [...prices];
@@ -13,10 +12,11 @@ export class PriceChangeData {
     this.max = Math.max(...prices);
     this.average = this.calculateAverage(prices);
     this.median = this.calculateMedian(prices);
+    this.maxDiff = this.max - this.min;
   }
 
   public toString(): string {
-    return `For the specified time period, the price started at ${this.min} and ended at ${this.max}. The average price was ${this.average}.`;
+    return `For the specified time period, the price started at ${this.min} and ended at ${this.max}. The average price was ${this.average}. The median price was ${this.median}. Difference between the max and min price was ${this.maxDiff.toFixed(2)}.`;
   }
 
   private calculateAverage(prices: number[]): number {
